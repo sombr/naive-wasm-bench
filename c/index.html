@@ -1,0 +1,26 @@
+<html>
+  <head></head>
+  <body>
+    <script src="main.js"></script>
+    <script>
+      var benchmark = Module.cwrap("benchmarkXS", "number", ["number", "number", "number"]);
+      var benchPI_C = Module.cwrap("piXS", "number", ["number"]);
+
+      function benchmarkC(r, c) {
+        var data = Module._malloc( r*c*4 );
+        console.time("benchmark C");
+        let res = benchmark(r, c, data);
+        console.timeEnd("benchmark C");
+        console.log(">>>> ", res);
+        Module._free(data);
+      }
+
+      function benchpiC(limit) {
+        console.time("benchmark PI C");
+        let res = benchPI_C(limit);
+        console.timeEnd("benchmark PI C");
+        console.log(">>>> ", res);
+      }
+    </script>
+  </body>
+</html>

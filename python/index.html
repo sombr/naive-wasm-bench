@@ -1,0 +1,49 @@
+<html>
+  <head>
+      <script src="https://cdn.jsdelivr.net/pyodide/v0.23.1/full/pyodide.js"></script>
+  </head>
+  <body>
+    <script type="text/javascript">
+      async function main() {
+        let pyodide = await loadPyodide();
+        let numpy = await pyodide.loadPackage("numpy");
+        console.log(pyodide.runPython(
+`
+  from js import console
+  import numpy as np
+  import math
+
+  def benchPY(r, c):
+    data = np.zeros( (r*c,) )
+    console.time("PY")
+    idx = 0
+    for rr in range(r):
+      for cc in range(c):
+        data[idx] = math.sqrt( rr*cc / (rr+cc+1) )
+        idx += 1
+
+    console.timeEnd("PY")
+
+  def piPY(limit):
+    d = 1
+    res = 0
+
+    console.time("benchmark PY")
+    for idx in range(limit):
+      if idx % 2 == 0:
+        res += 4.0 / d
+      else:
+        res -= 4.0 / d
+      d += 2
+    console.timeEnd("benchmark PY")
+
+    return res
+
+  piPY(1000000000)
+`));
+      }
+
+      main()
+    </script>
+  </body>
+</html>
